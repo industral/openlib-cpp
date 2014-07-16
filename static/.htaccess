@@ -1,0 +1,148 @@
+#http://www.krasland.ru/lib/index.php?id=show&aid=527&ses=59b789fb1ba0d4924bc440bbabd83b78
+#http://deepmemo.com/forrest/weblog/23112.html
+# http://www.php-web.info/articles/recepies/htaccess-templates.html
+
+AddDefaultCharset utf-8
+AddHandler cgi-script .cgi .pl
+DirectoryIndex index.html index.xml index.xhtml index.cgi
+Options FollowSymLinks ExecCGI -Indexes
+RewriteEngine on
+
+# Убираем ETag
+Header unset ETag
+FileETag None
+
+# Убираем Last-Modified
+# Header unset Last-Modified
+
+Header set Cache-Control "max-age=86400, public"
+# Header set Cache-Control "public"
+# Header set Pragma "public"
+
+# Cache Control with .htaccess EXPIRES BY TYPE
+# from http://forum.powweb.com/showthread.php?t=62786
+
+### turn on the Expires engine
+ExpiresActive On
+
+### expires after a 1 day in the client's cache
+ExpiresByType image/gif A86400
+ExpiresByType image/png A86400
+ExpiresByType image/jpg A259200
+ExpiresByType image/jpeg A259200
+ExpiresByType image/x-icon A86400
+# ExpiresByType application/pdf A86400
+ExpiresByType application/x-javascript A259200
+ExpiresByType text/plain A86400
+
+### expires after 3 day
+ExpiresByType text/css A259200
+
+# Please note that the "A" before the numbers above stands for Access.
+# This means that the stopwatch starts when a client accesses the file.
+# You can also use "M" for modified.
+
+# TIME CHEAT SHEET
+# 300 5 MIN
+# 600 10 MIN
+# 900 15 MIN
+# 1800 30 MIN
+# 2700 45 MIN
+#
+# 3600 1 HR
+# 7200 2 HR
+# 10800 3 HR
+# 14400 4 HR
+# 18000 5 HR
+# 36000 10 HR
+# 39600 11 HR
+# 43200 12 HR
+# 46800 13 HR
+# 50400 14 HR
+# 54000 15 HR
+# 86400 24 HR
+#
+# 86400 1 DAY
+# 172800 2 DAY
+# 259200 3 DAY
+# 345600 4 DAY
+# 432000 5 DAY
+# 518400 6 DAY
+# 604800 7 DAY
+#
+# 604800 1 WEEK
+# 1209600 2 WEEK
+# 1814400 3 WEEK
+# 2419200 4 WEEK
+#
+# 2419200 1 MONTH (FEBRUARY)
+# 2505600 1 MONTH (FEBRUARY LEAP YEAR)
+# 2592000 1 MONTH (APRIL, JUNE, SEPTEMBER, NOVEMBER)
+# 2678400 1 MONTH (JANUARY, MARCH, MAY, JULY, AUGUST, OCTOBER, DECEMBER)
+# 31536000 12 MONTH
+
+AddType application/x-javascript .gz
+AddType application/x-javascript .js
+AddType text/css .gz
+AddType text/css .css
+RewriteRule ^(.*\.gz)$ $1 [L]
+RewriteCond %{HTTP:Accept-Encoding} gzip
+RewriteRule ^(.*\.js)$ $1.gz
+RewriteRule ^(.*\.css)$ $1.gz
+AddEncoding gzip .gz
+
+## Перенаправление с www.openlib.org.ua на openlib.org.ua
+## нужно для SEO
+# rewritecond %{http_host} ^www.openlib.org.ua [nc]
+# rewriterule ^(.*)$ http://openlib.org.ua/$1 [r=301,nc]
+
+# rewritecond %{http_host} ^books.openlib.org.ua [nc]
+# rewriterule ^(.*)$ http://openlib.org.ua/$1 [r=301,nc]
+
+# rewritecond %{http_host} ^books.openlib.org.ua [nc]
+# rewriterule ^(.*)$ http://openlib.org.ua/ [r=301,nc]
+
+ErrorDocument 404 http://openlib.org.ua
+ErrorDocument 403 http://openlib.org.ua
+ErrorDocument 500 /500.xhtml
+
+RewriteRule ^$ /ht/index.cgi?first=1&page=1
+# Главная страница
+RewriteRule ^(ht)/$ /ht/index.cgi?first=1&page=1
+# Главная страница через AJAX
+RewriteRule ^(ht)/first$ /ht/content.cgi?first=1&page=1
+RewriteRule ^(ht)/(books)/(category)/([0-9]*)(|/||)([0-9]*)(|/||)$ /ht/content.cgi?&category=$4&page=$6
+RewriteRule ^(ht)/(book)/([0-9]*)(|/||)$ /ht/content.cgi?&book=$3
+RewriteRule ^(ht)/(scrape)/([0-9]*)$ /ht/scrape/scrape.cgi?id=$3
+
+# RewriteRule ^$ /cgi/index.cgi?first=1&page=1
+# RewriteRule ^([0-9]*)(|/||)$ /cgi/index.cgi?first=1&page=$1
+# RewriteRule ^(books)/(category)/([0-9]*)(|/||)([0-9]*)(|/||)$ /cgi/index.cgi?&category=$3&page=$5
+# RewriteRule ^(book)/([0-9]*)(|/||)$ /cgi/index.cgi?&book=$2
+# ## RSS/ATOM ##
+# RewriteRule ^(rss)(|/||)$ /cgi/rss.cgi
+# RewriteRule ^(rss)/([0-9]*)(|/||)$ /cgi/rss.cgi?&category=$2
+# RewriteRule ^(atom)(|/||)$ /cgi/atom.cgi
+# RewriteRule ^(atom)/([0-9]*)(|/||)$ /cgi/atom.cgi?&category=$2
+
+# ## doc ##
+# RewriteRule ^(rules)(|/||)$ /doc/rules.xhtml
+# RewriteRule ^(sponsors)(|/||)$ /doc/sponsors.xml
+# RewriteRule ^(feedback)(|/||)$ /doc/feedback.xhtml
+# RewriteRule ^(faq)(|/||)$ /doc/faq.xhtml
+# RewriteRule ^(about)(|/||)$ /doc/about.xhtml
+# RewriteRule ^(site)(|/||)$ /doc/site.xhtml
+
+## doc ##
+RewriteRule ^(ht)/(rules)(|/||)$ /doc/rules.xhtml
+RewriteRule ^(ht)/(sponsors)(|/||)$ /doc/sponsors.xhtml
+RewriteRule ^(ht)/(feedback)(|/||)$ /doc/feedback.xhtml
+RewriteRule ^(ht)/(faq)(|/||)$ /doc/faq.xhtml
+RewriteRule ^(ht)/(about)(|/||)$ /doc/about.xhtml
+RewriteRule ^(ht)/(site)(|/||)$ /doc/site.xhtml
+
+## RSS/ATOM ##
+RewriteRule ^(ht)/(rss)(|/||)$ /cgi/rss.cgi
+RewriteRule ^(ht)/(rss)/([0-9]*)(|/||)$ /cgi/rss.cgi?&category=$2
+RewriteRule ^(ht)/(atom)(|/||)$ /cgi/atom.cgi
+RewriteRule ^(ht)/(atom)/([0-9]*)(|/||)$ /cgi/atom.cgi?&category=$2
